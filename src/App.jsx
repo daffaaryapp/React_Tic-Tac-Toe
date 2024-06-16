@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 // import { useState } from 'react'
 
 import { useState } from "react"
@@ -15,13 +16,25 @@ function Square({value,onSquareClick}){
 
 
 export default function Board() {
-  const [squares,setSquares] = useState(Array(9).fill(null))
+  const [squares,setSquares] = useState(Array(9).fill(null));
+  const [xIsNext,setxIsNext] = useState(true);
 
   function handleClick(i){
+    if (squares[i] || calculatewinner(squares)) return;
+
     const nextSquares = squares.slice();
-    nextSquares[i] = 'X';
+
+    if (xIsNext){
+      nextSquares[i] = 'X';
+    }else{
+      nextSquares[i] = 'O';
+    }
     setSquares(nextSquares);
+    setxIsNext(!xIsNext);
   }
+
+  const winner = calculatewinner(squares);
+  console.log(winner)
 
 
   return (
@@ -37,6 +50,29 @@ export default function Board() {
       <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
     </div>
   )
+}
+
+function calculatewinner(squares){
+  const lines = [
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+    [0,4,8],
+    [2,4,6]
+  ];
+
+  for (let i = 0; i< lines.length; i++){
+    const [a,b,c] = lines[i];
+
+    if(squares[a] && squares[a] === squares[b] && squares[c]){
+      return squares[a];
+    }
+  }
+
+  return false;
 }
 
 
